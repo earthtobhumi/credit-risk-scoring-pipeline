@@ -1,0 +1,19 @@
+# Feast feature store config for the credit risk pipeline.
+#
+# provider: local + online_store: sqlite matches the original architecture doc's
+# choice ("Feast (SQLite/local backend)") -- no substitution needed here, unlike
+# Bronze/Silver/streaming in Phase 1. This is a real Feast deployment mode, not a
+# sandbox workaround; it also happens to be the right choice for a laptop/CI dev
+# loop before a real cloud deployment.
+#
+# offline_store defaults to Feast's file-based offline store (Dask/Arrow-backed),
+# which reads Parquet directly -- this is what makes the Gold Delta -> plain
+# Parquet export in engineer_features.py necessary (see that module's docstring
+# and features.py below).
+project: credit_risk_pipeline
+registry: data/registry.db
+provider: local
+online_store:
+    type: sqlite
+    path: data/online_store.db
+entity_key_serialization_version: 2

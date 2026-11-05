@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Set up Java (PySpark needs a JVM)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check for dependency conflicts
+        run: pip check
+
+      # Unit tests only: they build their own tiny data and never need the Kaggle
+      # files, a trained model, or the feature store. The full pipeline runs locally
+      # (see README).
+      - name: Run tests
+        run: PYTHONPATH=. pytest tests/ -q

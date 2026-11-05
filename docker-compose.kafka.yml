@@ -1,0 +1,35 @@
+# Real local Kafka broker, for when you want to swap out the file-based
+# stream simulation (src/ingestion/streaming_producer.py) for the real thing.
+#
+# Usage:
+#   docker-compose -f docker-compose.kafka.yml up -d
+#   docker exec -it kafka kafka-topics --create --topic loan-applications \
+#     --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+#
+# Then update src/ingestion/streaming_producer.py and streaming_consumer.py
+# to use confluent-kafka's Producer/Consumer against localhost:9092 instead
+# of STREAM_TOPIC_FILE (see the docstring in streaming_producer.py for the
+# exact swap). For a managed option instead of self-hosting, use Confluent
+# Cloud's free tier and put the bootstrap servers + API key in .env.
+
+version: "3.8"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

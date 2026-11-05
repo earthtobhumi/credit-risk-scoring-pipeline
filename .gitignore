@@ -1,0 +1,30 @@
+data/raw/*.csv
+data/bronze/
+data/silver/
+data/gold/
+data/quarantine/
+data/stream_topic.jsonl
+data/.stream_consumer_offset
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+gx/
+*.egg-info/
+feature_repo/data/registry.db
+feature_repo/data/online_store.db
+
+# Phase 3: local MLflow store and generated reports
+mlflow.db
+mlartifacts/
+mlruns/
+reports/
+
+# More local-only files
+.venv/
+venv/
+data/splits/
+data/training/
+*.csv
+*.parquet
+*.zip
